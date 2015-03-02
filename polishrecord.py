@@ -1,42 +1,55 @@
 def ExpToPolish(exp):
     Priority = {'*':3, '/':3, '+':2, '-':2, '(':1}
-    functions = ['+', '-', '*', '/']
+    functions = ['-', '+', '*', '/']
     result = []
     operands = []
+    lastdigit = False
+    if exp.strip()[-1] in functions or exp.strip()[0] in functions[1:]:
+        return 'Error! Check input expression'
     for part in range(len(exp)):
+        if exp[part] == '-' and len(result) == 0:
+            result.append(exp[part])
+            continue
         if exp[part].isdigit():
             if part+1 < len(exp) and exp[part+1].isdigit():
                 result.append(exp[part])
                 continue
-            else:
-                result.extend([exp[part], ' '])
+            if lastdigit:
+                return 'Error! Missed operator between numbers'
+            result.extend([exp[part], ' '])
+            lastdigit = True
+            continue
         if exp[part] == ' ':
             continue
-        if exp[part] in functions or exp[part] == '(':
+        if exp[part] == '(':
             operands.append(exp[part])
+        if exp[part] in functions:
+            if not operands or operands[-1] == '(':
+                operands.append(exp[part])
+            else:
+                while  len(operands)>0 and Priority[exp[part]] <= Priority[operands[-1]]:
+                    result.extend([operands.pop(), ' '])
+                operands.append(exp[part])
         if exp[part] == ')':
             poper = operands.pop()
             while poper != '(':
                 result.extend([poper, ' '])
                 poper = operands.pop()
-            while len(operands) > 0:
-                if operands[-1] in functions:
-                    result.extend([operands.pop(), ' '])
-                else:
-                    break
-        if exp[part] in ['*', '/']:
-            while len(operands) > 2 and Priority[exp[part]] <= Priority[operands[-1]]:
-                result.extend([operands.pop(), ' '])
-
+        lastdigit = False
     while operands:
-        result.extend([' ', operands.pop()])
+        if result[-1] != ' ':
+            result.extend([' ', operands.pop()])
+        else:
+            result.append(operands.pop())
     return ''.join(result)
 
 def Polish(string):
     res = []
     string = string.split()
     for el in string:
-        if el.isdigit():
+        if el.startswith('-') and len(el) > 1:
+            res.append(el)
+        elif el.isdigit():
             res.append(el)
         elif el in ['+','-','*','/']:
             try:
@@ -44,20 +57,15 @@ def Polish(string):
                 x = res.pop()
                 res.append(str(eval(x+el+y)))
             except IndexError:
-                print  'Error! Check input expression'
-                break
+                return  'Error! Wrong numbers of operands'
             except ZeroDivisionError:
-                print 'Error! Zero division!'
-                break
+                return 'Error! Zero division!'
     if len(res) !=1:
         return 'Error! Wrong numbers of operands'
-    return res.pop()
+    return int(res.pop())
 
 if __name__ == '__main__':
-    #string = '234 345 456 + + 5 /'
-    #string = '8 2 5 * + 1 3 2 * + 4 - /'
-    #print Polish(string)
-    string = '3*(2+10)+5*10'
+    string = '8 2 5 * + 1 3 2 * + 4 - / *'
     pol = ExpToPolish(string)
     print pol
     print Polish(pol)

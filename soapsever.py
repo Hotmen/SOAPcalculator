@@ -1,8 +1,14 @@
 import SOAPpy
+import polishrecord
 
-def hello(x ,y):
-    return x+y
+def calculate(expression):
+    return polishrecord.Polish(polishrecord.ExpToPolish(expression))
 
-server = SOAPpy.SOAPServer(("localhost", 8080))
-server.registerFunction(hello)
-server.serve_forever()
+class MySoapServer(SOAPpy.SOAPServer):
+    def __init__(self, host, port):
+        SOAPpy.SOAPServer.__init__(self, (host, port))
+        self.registerFunction(calculate)
+
+if __name__ == '__main__':
+    ser = MySoapServer('localhost', 8080)
+    ser.serve_forever()
