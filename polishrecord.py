@@ -1,5 +1,5 @@
-def ExpToPolish(exp):
-    Priority = {'*':3, '/':3, '+':2, '-':2, '(':1}
+def exptopolish(exp):
+    priority = {'*': 3, '/': 3, '+': 2, '-': 2, '(': 1}
     functions = ['-', '+', '*', '/']
     result = []
     operands = []
@@ -27,7 +27,7 @@ def ExpToPolish(exp):
             if not operands or operands[-1] == '(':
                 operands.append(exp[part])
             else:
-                while  len(operands)>0 and Priority[exp[part]] <= Priority[operands[-1]]:
+                while len(operands) > 0 and priority[exp[part]] <= priority[operands[-1]]:
                     result.extend([operands.pop(), ' '])
                 operands.append(exp[part])
         if exp[part] == ')':
@@ -43,7 +43,8 @@ def ExpToPolish(exp):
             result.append(operands.pop())
     return ''.join(result)
 
-def Polish(string):
+
+def polish(string):
     res = []
     string = string.split()
     for el in string:
@@ -51,21 +52,21 @@ def Polish(string):
             res.append(el)
         elif el.isdigit():
             res.append(el)
-        elif el in ['+','-','*','/']:
+        elif el in ['+', '-', '*', '/']:
             try:
                 y = res.pop()
                 x = res.pop()
                 res.append(str(eval(x+el+y)))
             except IndexError:
-                return  'Error! Wrong numbers of operands'
+                return 'Error! Wrong numbers of operands'
             except ZeroDivisionError:
                 return 'Error! Zero division!'
-    if len(res) !=1:
+    if len(res) != 1:
         return 'Error! Wrong numbers of operands'
     return int(res.pop())
 
 if __name__ == '__main__':
-    string = '8 2 5 * + 1 3 2 * + 4 - / *'
-    pol = ExpToPolish(string)
+    expression = '8 2 5 * + 1 3 2 * + 4 - / *'
+    pol = exptopolish(expression)
     print pol
-    print Polish(pol)
+    print polish(pol)

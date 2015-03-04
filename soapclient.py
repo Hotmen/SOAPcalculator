@@ -1,6 +1,9 @@
 from SOAPpy import SOAPProxy
-import sys, socket, threading
+import sys
+import socket
+import threading
 from soapsever import MySoapServer
+
 
 def startcalculate(host, port):
     sock = socket.socket()
@@ -11,9 +14,10 @@ def startcalculate(host, port):
         sock.close()
         return
     sock.close()
-    conn = SOAPProxy('localhost:8080')
-    #conn.config.dumpSOAPOut = 1        #Debug option for output connection
-    #conn.config.dumpSOAPIn = 1         #Debug option for input connection
+    url = str(host) + ':' + str(port)
+    conn = SOAPProxy(url)
+    # conn.config.dumpSOAPOut = 1        #Debug option for output connection
+    # conn.config.dumpSOAPIn = 1         #Debug option for input connection
 
     data = ''
     sys.stdout.write('Welcome to calculator!\n')

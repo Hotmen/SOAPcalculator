@@ -1,8 +1,10 @@
 import SOAPpy
 import polishrecord
 
+
 def calculate(expression):
-    return polishrecord.Polish(polishrecord.ExpToPolish(expression))
+    return polishrecord.polish(polishrecord.exptopolish(expression))
+
 
 class MySoapServer(SOAPpy.SOAPServer):
     def __init__(self, host, port):
